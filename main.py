@@ -4,7 +4,7 @@ from PIL import Image
 # JSON for data
 import json
 
-ctk.set_appearance_mode("System")  # Modes: system (default), light, dark
+ctk.set_appearance_mode("dark")  # Modes: system (default), light, dark
 ctk.set_default_color_theme("dark-blue")  # Themes: blue (default), dark-blue, green
 
 # Forgot Password
@@ -13,8 +13,6 @@ class ForgotWindow(ctk.CTkToplevel):
         super().__init__(*args, **kwargs)
         self.geometry("350x300")
         self.title("Goofy Banking App (Forgot Password)")
-
-    
 
 # Registering 
 class RegisterWindow(ctk.CTkToplevel):
@@ -29,20 +27,32 @@ class RegisterWindow(ctk.CTkToplevel):
         self.reg_label_font = ctk.CTkFont(family="Helvetica", size=12)
         self.reg_label.configure(font=self.reg_label_font)
 
-        def register():
+        def save_to_json(details_dict, filename):
+            with open(filename, 'w') as file:
+                json.dump(details_dict, file)
 
+        def register():
+            # Text that shows up on screen
             if len(self.username_entry.get()) == 0 and len(self.password_entry.get()) == 0: 
                 self.reg_label.configure(text="The fields are empty")
-
             elif len(self.username_entry.get()) >= 1 and len(self.password_entry.get()) == 0:
                 self.reg_label.configure(text="Something's wrong with your entry")
-
             elif len(self.password_entry.get()) >= 1 and len(self.username_entry.get()) == 0:
                 self.reg_label.configure(text="Something's wrong with your entry")
-
             elif len(self.username_entry.get()) >= 1 or len(self.password_entry.get()) >= 1:
                 self.reg_label.configure(text="Successfully registered!")
 
+            # Saving input to a .json file
+            user = self.username_entry.get()
+            passw = self.password_entry.get()
+            if user:
+                details_dict["username"].append(user)
+                details_dict["password"].append(passw)
+                save_to_json(details_dict, "data.json")
+
+                self.username_entry.delete(0, "end")
+                self.password_entry.delete(0, "end") # Clear the widgets after we're done
+    
         # Text and buttons
         self.register_text = ctk.CTkLabel(master=self, text="Register")
         self.register_text.place(relx=0.28, rely=0.2, anchor=ctk.CENTER)
@@ -57,6 +67,12 @@ class RegisterWindow(ctk.CTkToplevel):
         
         self.register_button = ctk.CTkButton(master=self, width=200, text="Register", command=register)
         self.register_button.place(relx=0.5, rely=0.55, anchor=ctk.CENTER)
+
+        # Creating the dictonary used to store data
+        details_dict = {
+                "username": [],
+                "password": []
+        }
 
 # The window after we log in      
 class LoggedWindow(ctk.CTkToplevel):
