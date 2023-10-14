@@ -42,12 +42,15 @@ class RegisterWindow(ctk.CTkToplevel):
             elif len(self.username_entry.get()) >= 1 or len(self.password_entry.get()) >= 1:
                 self.reg_label.configure(text="Successfully registered!")
 
+            # Creating the dictonary used to store data
+            details_dict = {}
+
             # Saving input to a .json file
             user = self.username_entry.get()
             passw = self.password_entry.get()
             if user:
-                details_dict["username"].append(user)
-                details_dict["password"].append(passw)
+                details_dict["username"] = user
+                details_dict["password"] = passw
                 save_to_json(details_dict, "data.json")
 
                 self.username_entry.delete(0, "end")
@@ -68,11 +71,6 @@ class RegisterWindow(ctk.CTkToplevel):
         self.register_button = ctk.CTkButton(master=self, width=200, text="Register", command=register)
         self.register_button.place(relx=0.5, rely=0.55, anchor=ctk.CENTER)
 
-        # Creating the dictonary used to store data
-        details_dict = {
-                "username": [],
-                "password": []
-        }
 
 # The window after we log in      
 class LoggedWindow(ctk.CTkToplevel):
